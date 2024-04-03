@@ -59,15 +59,29 @@ AudioPluginAudioProcessorEditor::AudioPluginAudioProcessorEditor (AudioPluginAud
      * slider change.  Then we call our C++ lambda onGainSliderChanged() to pass on the gain value */
     webView->bind ("gainValueCallback", onGainSliderChanged);
 
-    // Find our html file from our binary data
-    const auto htmlData = juce::String::createStringFromData (data::gain_view_html, data::gain_view_htmlSize);
+    // Trickery to get the html file location from the current source tree
+    juce::File thisFilesPath{__FILE__};
+    auto pathToHtml = thisFilesPath.getParentDirectory().getParentDirectory().getChildFile("WebView/gain_view.html");
+    if (pathToHtml.existsAsFile())
+    {
+        // we are on our developer machine and the source tree has the html
+        auto ssPath = pathToHtml.getFullPathName().toStdString();
+        // navigate allows to refresh from the html at runtime
+        webView->navigate(ssPath);
+    } else
+    {
+        // developer source tree html was not found, revert to loading from plugin binary resource
 
-    // If valid, show the HTML
-    if (htmlData.isNotEmpty())
-        webView->setHTML (htmlData.toStdString());
-    else
-        jassertfalse;
+        // Find our html file from our binary data
+        const auto htmlData = juce::String::createStringFromData (data::gain_view_html, data::gain_view_htmlSize);
 
+        // If valid, show the HTML
+        if (htmlData.isNotEmpty())
+            webView->setHTML (htmlData.toStdString());
+        else
+            jassertfalse;
+    }
+    
     setSize (400, 300);
 }
 
