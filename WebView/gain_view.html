@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="View" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      margin: 20px;
+    }
+
+    #output {
+      margin-top: 20px;
+    }
+    
+  </style>
+</head>
+<script>
+
+  /*
+  This is where the magic happens between Choc and Javascript.
+  We create a callback `gainValueCallback()` that will be called by Choc's bind() when this gain value is updated.
+  By marking this function as async, we implicitly wrap the output in a Promise object.  This is a requirement
+  when invoking gainValueCallback() in bind() on the C++ side.
+   */
+  async function updateGain(val)
+  {
+    if (typeof window.gainValueCallback === 'function') {
+      window.gainValueCallback(val);
+    }
+
+    return val;
+  }
+
+  // This is called when the slider is moved.  Pass on the slider value to updateGain(), then update the displayed value.
+  function sendSliderValue(sliderValue) {
+    updateGain(sliderValue)
+    .then((result) => {
+      document.getElementById("gainSliderValue").textContent = result;
+    });
+  }
+
+</script>
+
+<body>
+
+  <!--
+  Create a slider with a range of 0.00 to 1.00, with a step of 0.01.
+  When the slider is moved, the sendSliderValue() function is called with the slider value as an argument.
+  -->
+  <p>Gain</p>
+  <input type="range" min="0.00" max="1.00" value="0.50" step="0.01" id="GainSlider" oninput="sendSliderValue(this.value)">
+  <span id="gainSliderValue">0.5</span>
+
+</body>
+</html>
