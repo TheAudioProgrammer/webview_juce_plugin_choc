@@ -4,28 +4,46 @@
   <meta charset="UTF-8">
   <meta name="View" content="width=device-width, initial-scale=1.0">
   <style>
+
     body {
       font-family: Arial, sans-serif;
       text-align: center;
-      margin: 20px;
+      margin: 50px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    #gainLabel {
+      width: 100px;
+      text-align: center;
+      margin-bottom: 10px;
     }
 
     #output {
       margin-top: 20px;
+      width: 100%;
     }
     
   </style>
 </head>
 <script>
 
+  var lastValue = null;
+
   /*
   This is where the magic happens between Choc and Javascript.
   We create a callback `gainValueCallback()` that will be called by Choc's bind() when this gain value is updated.
-  By marking this function as async, we implicitly wrap the output in a Promise object.  This is a requirement
-  when invoking gainValueCallback() in bind() on the C++ side.
    */
-  async function updateGain(val)
-  {
+  function updateGain(val) {
+
+    // If val is the same as the last time we called this, bail out and don't trigger the callback
+    if (val === lastValue) {
+      return;
+    }
+
+    lastValue = val;
+
     if (typeof window.gainValueCallback === 'function') {
       window.gainValueCallback(val);
     }
@@ -35,14 +53,18 @@
 
   // This is called when the slider is moved.  Pass on the slider value to updateGain(), then update the displayed value.
   function sendSliderValue(sliderValue) {
+    sliderValue = parseFloat(sliderValue).toFixed(2);
+
     updateGain(sliderValue)
     .then((result) => {
-      document.getElementById('gainLabel').textContent = result;
+      document.getElementById('gainLabel').textContent = result + "dB";
     });
   }
 
   // Receive updated value from C++ (i.e. when a user changes the parameter using automation)
   function receiveGainValue(val) {
+    val = parseFloat(val).toFixed(2);
+
     document.getElementById('gainLabel').innerHTML = val + " dB";
     sendSliderValue(parseFloat(val));
   }
