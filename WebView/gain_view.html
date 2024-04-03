@@ -37,8 +37,14 @@
   function sendSliderValue(sliderValue) {
     updateGain(sliderValue)
     .then((result) => {
-      document.getElementById("gainSliderValue").textContent = result;
+      document.getElementById('gainLabel').textContent = result;
     });
+  }
+
+  // Receive updated value from C++ (i.e. when a user changes the parameter using automation)
+  function receiveGainValue(val) {
+    document.getElementById('gainLabel').innerHTML = val + " dB";
+    sendSliderValue(parseFloat(val));
   }
 
 </script>
@@ -50,8 +56,8 @@
   When the slider is moved, the sendSliderValue() function is called with the slider value as an argument.
   -->
   <p>Gain</p>
-  <input type="range" min="0.00" max="1.00" value="0.50" step="0.01" id="GainSlider" oninput="sendSliderValue(this.value)">
-  <span id="gainSliderValue">0.5</span>
+  <input type="range" min="-40.0" max="6.00" value="-20.0" step="0.01" id="GainSlider" oninput="sendSliderValue(this.value)">
+  <span id="gainLabel">-20.0 dB</span>
 
 </body>
 </html>

@@ -25,6 +25,16 @@ AudioPluginAudioProcessorEditor::AudioPluginAudioProcessorEditor (AudioPluginAud
 
     addAndMakeVisible (*webViewContainer);
 
+    // If the user changes the gain value from the DAW, we need to pass the slider to the JS function receiveGainValue
+    auto receiveGainValue = [this](float newGainValue)
+    {
+        std::string jsCode = "receiveGainValue(" + std::to_string(newGainValue) + ");";
+        webView->evaluateJavascript (jsCode, nullptr);
+    };
+
+    // Associate the GAIN parameter in the processor with the UI component we need to update when GAIN is changed (in JS)
+    gainAttachment = std::make_unique<juce::ParameterAttachment>(*processorRef.getParamList().getParameter ("GAIN"), receiveGainValue);
+
     /* Lambda to parse through the JS JavaScript and pass it to the processor.
     This is a "proof of concept" where the only param is our gain.  A true implementation would identify what param
     was changed, then update accordingly.  I suppose you could alternatively have a separate callback for each param. */
@@ -35,11 +45,10 @@ AudioPluginAudioProcessorEditor::AudioPluginAudioProcessorEditor (AudioPluginAud
         if (json.isArray())
         {
             float gainVal = json[0].toString().getFloatValue();
-            processorRef.gain = gainVal;
+            gainAttachment->setValueAsCompleteGesture (gainVal);
         }
         else
         {
-            jassertfalse;
             return choc::value::Value(-1);
         }
 
