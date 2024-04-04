@@ -6,23 +6,36 @@
   <style>
 
     body {
-      font-family: Arial, sans-serif;
+      font-family: Verdana, sans-serif;
       text-align: center;
       margin: 50px;
       display: flex;
       flex-direction: column;
       align-items: center;
+      background-color: lightblue;
     }
 
-    #gainLabel {
+    #tap-logo {
+      margin-top: 10px;
+      position: absolute;
+      top: 10px;
+      width: 200px;
+    }
+
+    #gain-title {
+      position: absolute;
+      margin-top: 60px;
+    }
+
+    #gain-slider {
+      width: 200px;
+      margin-top: 100px;
+    }
+
+    #gain-label {
       width: 100px;
       text-align: center;
       margin-bottom: 10px;
-    }
-
-    #output {
-      margin-top: 20px;
-      width: 100%;
     }
     
   </style>
@@ -57,13 +70,15 @@
 
 <body>
 
+  <img id="tap-logo" src="Resources/tap_logo.png" alt="tap logo">
+
   <!--
   Create a slider with a range of 0.00 to 1.00, with a step of 0.01.
   When the slider is moved, the sendSliderValue() function is called with the slider value as an argument.
   -->
-  <p>Gain</p>
-  <input type="range" min="-40.0" max="6.00" value="-20.0" step="0.01" id="GainSlider" oninput="sendSliderValue(this.value)">
-  <span id="gainLabel">-20.0 dB</span>
+  <H3 id="gain-title">Gain</H3>
+  <input id="gain-slider" type="range" min="-40.0" max="6.00" value="-20.0" step="0.01" oninput="sendSliderValue(this.value)">
+  <span id="gain-label">-20.0 dB</span>
 
 </body>
 </html>
