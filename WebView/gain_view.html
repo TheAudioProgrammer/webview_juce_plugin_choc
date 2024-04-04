@@ -52,7 +52,7 @@
   function sendSliderValue(sliderValue) {
     sliderValue = parseFloat(sliderValue).toFixed(2);
 
-    document.getElementById('gainLabel').innerHTML = sliderValue + "dB";
+    document.getElementById('gain-label').innerHTML = sliderValue + "dB";
 
     if (typeof window.gainValueCallback === 'function') {
       window.gainValueCallback(sliderValue);
@@ -62,8 +62,8 @@
   // Receive updated value from C++ (i.e. when a user changes the parameter using automation)
   function receiveGainValue(val) {
     val = parseFloat(val).toFixed(2);
-    document.getElementById('gainLabel').innerHTML = val + " dB";
-    document.getElementById('GainSlider').value = val;
+    document.getElementById('gain-label').innerHTML = val + " dB";
+    document.getElementById('gain-slider').value = val;
   }
 
 </script>
