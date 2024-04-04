@@ -32,41 +32,25 @@
   var lastValue = null;
 
   /*
-  This is where the magic happens between Choc and Javascript.
+  This is called when the slider is moved.
+  This also is where the magic happens between Choc and Javascript.
   We create a callback `gainValueCallback()` that will be called by Choc's bind() when this gain value is updated.
    */
-  function updateGain(val) {
-
-    // If val is the same as the last time we called this, bail out and don't trigger the callback
-    if (val === lastValue) {
-      return;
-    }
-
-    lastValue = val;
-
-    if (typeof window.gainValueCallback === 'function') {
-      window.gainValueCallback(val);
-    }
-
-    return val;
-  }
-
-  // This is called when the slider is moved.  Pass on the slider value to updateGain(), then update the displayed value.
   function sendSliderValue(sliderValue) {
     sliderValue = parseFloat(sliderValue).toFixed(2);
 
-    updateGain(sliderValue)
-    .then((result) => {
-      document.getElementById('gainLabel').textContent = result + "dB";
-    });
+    document.getElementById('gainLabel').innerHTML = sliderValue + "dB";
+
+    if (typeof window.gainValueCallback === 'function') {
+      window.gainValueCallback(sliderValue);
+    }
   }
 
   // Receive updated value from C++ (i.e. when a user changes the parameter using automation)
   function receiveGainValue(val) {
     val = parseFloat(val).toFixed(2);
-
     document.getElementById('gainLabel').innerHTML = val + " dB";
-    sendSliderValue(parseFloat(val));
+    document.getElementById('GainSlider').value = val;
   }
 
 </script>

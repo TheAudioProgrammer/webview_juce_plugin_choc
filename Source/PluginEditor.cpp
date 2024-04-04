@@ -62,10 +62,12 @@ AudioPluginAudioProcessorEditor::AudioPluginAudioProcessorEditor (AudioPluginAud
     // Trickery to get the html file location from the current source tree
     juce::File thisFilesPath{__FILE__};
     auto pathToHtml = thisFilesPath.getParentDirectory().getParentDirectory().getChildFile("WebView/gain_view.html");
+
     if (pathToHtml.existsAsFile())
     {
         // we are on our developer machine and the source tree has the html
-        auto ssPath = pathToHtml.getFullPathName().toStdString();
+        auto ssPath = R"(file:///)"+pathToHtml.getFullPathName().toStdString();
+
         // navigate allows to refresh from the html at runtime
         webView->navigate(ssPath);
     } else

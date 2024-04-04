@@ -32,5 +32,6 @@ private:
     // How we can pass the value between the UI and processor in a thread safe way...
     std::unique_ptr<juce::ParameterAttachment> gainAttachment;
 
+
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (AudioPluginAudioProcessorEditor)
 };
